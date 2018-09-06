@@ -93,8 +93,28 @@ class PriorityQueue:
 				self.changeKey(mapArray[x][y - 1])
 		return mapArray
 
-	def search_path(self,modified,original):
-		pass
+	def search_path(self,mapArray):
+		x = self.size - 1
+		y = self.size - 1
+		path = []
+		while(x > 0 or y > 0):
+			mapArray[x][y].index = 0
+			path.append((x,y))
+			print(x,y)
+			if(x + 1 < self.size and mapArray[x + 1][y].index == -1 and mapArray[x + 1][y].dist == mapArray[x][y].dist - mapArray[x][y].key_orig):
+				x = x + 1
+				continue
+			if(y + 1 < self.size and mapArray[x][y + 1].index == -1 and mapArray[x][y + 1].dist == mapArray[x][y].dist - mapArray[x][y].key_orig):
+				y = y + 1
+				continue
+			if(x > 0 and mapArray[x - 1][y].index == -1 and mapArray[x - 1][y].dist == mapArray[x][y].dist - mapArray[x][y].key_orig):
+				x = x - 1
+				continue
+			if(y > 0 and mapArray[x][y - 1].index == -1 and mapArray[x][y - 1].dist == mapArray[x][y].dist - mapArray[x][y].key_orig):
+				y = y - 1
+				continue
+		path.append((0, 0))
+		return path	
 
 #def djikstra():
 
@@ -118,15 +138,26 @@ def main():
 		row = whole_file[i + 1].split()
 		for j in range(len(row)):
 			k = int(row[j])
-			v = Vertex(i,j,k)
+			v = Vertex(j,i,k)
 			mapArray[i].append(v)
 			prQueue.insert(mapArray[i][j])
 		mapArray.append([])
-	mapArray = mapArray[0:-1]
+	mapArray = np.array(mapArray[0:-1]).transpose()
+
+	for i in range(N):
+		print([row[i].key for row in mapArray], sep =' ')
+	print("---------------")
+
 
 	mapArray[0][0].dist = mapArray[0][0].key;
 	print(prQueue.search_length_path(mapArray)[prQueue.size - 1][prQueue.size - 1].dist)
 	
+	path = prQueue.search_path(mapArray)
+
+	for pair in path:
+		x = pair[0]
+		y = pair[1]
+
 	for i in range(N):
 		print([row[i].dist for row in mapArray], sep =' ')
 	print("---------------")
